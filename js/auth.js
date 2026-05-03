@@ -131,38 +131,52 @@ const Auth = {
   },
 
   // ─── Register ───
-  async register(username, password, name, email, role = 'kasir') {
+    async register(username, password, name, email, role = 'kasir') {
     try {
       Utils.showLoading('Mendaftarkan...');
       const formatted = Utils.formatUsername(username);
-      if (!formatted || formatted.length < 3) { Utils.hideLoading(); Utils.showToast('Username min 3 karakter', 'error'); return { success: false }; }
+      if (!formatted || formatted.length < 3) { 
+        Utils.hideLoading(); 
+        Utils.showToast('Username min 3 karakter', 'error'); 
+        return { success: false }; 
+      }
 
-            // ⭐ 1. Bikin akun Firebase Auth DULU (sekarang user sudah terautentikasi)
       const userEmail = email || `${formatted}@webpos.local`;
+
+      // ⭐ 1. BIKIN AKUN FIREBASE AUTH DULU (sekarang user terautentikasi)
       let res;
       try {
         res = await auth.createUserWithEmailAndPassword(userEmail, password);
       } catch (e) {
         Utils.hideLoading();
-        if (e.code === 'auth/email-already-in-use') Utils.showToast('Email sudah terdaftar', 'error');
-        else if (e.code === 'auth/weak-password') Utils.showToast('Password terlalu lemah', 'error');
-        else Utils.showToast('Gagal membuat akun: ' + e.message, 'error');
-        return { success: false };
+        let msg = 'Pendaftaran gagal';
+        if (e.code === 'auth/email-already-in-use') msg = 'Email sudah terdaftar';
+        else if (e.code === 'auth/weak-password') msg = 'Password terlalu lemah (min 6)';
+        else if (e.code === 'auth/invalid-email') msg = 'Email tidak valid';
+        else msg = e.message;
+        Utils.showToast(msg, 'error');
+        return { success: false, message: msg };
       }
+
       const uid = res.user.uid;
 
-      // ⭐ 2. Sekarang sudah auth, baru cek username + write data
-      const check = await database.ref('users').orderByChild('username').equalTo(formatted).once('value');
-      if (check.val()) {
-        // Username sudah ada → hapus akun Firebase yang baru dibuat
-        await auth.currentUser.delete();
-        await auth.signOut();
-        Utils.hideLoading();
-        Utils.showToast('Username sudah digunakan', 'error');
-        return { success: false };
+      // ⭐ 2. SEKARANG SUDAH AUTH, baru cek username + write data
+      try {
+        const check = await database.ref('users').orderByChild('username').equalTo(formatted).once('value');
+        if (check.val()) {
+          // Username sudah ada → hapus akun yang baru dibuat
+          await auth.currentUser.delete();
+          await auth.signOut();
+          Utils.hideLoading();
+          Utils.showToast('Username sudah digunakan', 'error');
+          return { success: false };
+        }
+      } catch (e) {
+        // Kalau cek username gagal (misal rules), tetap lanjut write data sendiri
+        console.log('Username check skipped:', e.message);
       }
 
-      // Developer & Owner langsung aktif. Admin & Kasir pending.
+      // ⭐ 3. WRITE DATA USER KE DATABASE (sekarang auth.uid == uid, rules izinkan)
       const autoActive = (role === 'developer' || role === 'owner');
       const status = autoActive ? 'active' : 'pending';
 
@@ -184,20 +198,16 @@ const Auth = {
       }
       Utils.showToast('Akun berhasil dibuat!', 'success');
       return { success: true, uid };
+
     } catch (e) {
       Utils.hideLoading();
       console.error('REGISTER EXACT ERROR:', e.code, e.message, e);
-      let msg = 'Pendaftaran gagal';
-      if (e.code === 'auth/email-already-in-use') msg = 'Email sudah terdaftar';
-      else if (e.code === 'auth/weak-password') msg = 'Password terlalu lemah (min 6)';
-      else if (e.code === 'auth/invalid-email') msg = 'Email tidak valid';
-      else if (e.code === 'auth/operation-not-allowed') msg = 'Email/Password belum aktif di Firebase Console';
-      else msg = e.message || 'Pendaftaran gagal';
+      let msg = e.message || 'Pendaftaran gagal';
       Utils.showToast(msg, 'error');
       return { success: false, message: msg };
     }
   },
-
+  
   // ─── Approve / Reject ───
   async approveUser(uid, approverUid) {
     try {

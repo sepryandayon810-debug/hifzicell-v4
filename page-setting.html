@@ -3,531 +3,356 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>WebPOS V3 — Pengaturan</title>
+  <title>WebPOS V3 — Pengaturan (Responsive)</title>
+  <meta name="description" content="Pengaturan WebPOS V3 - tema global, akses role, bluetooth printer, backup & sync" />
   <style>
-    :root{
-      --bg:#0b1220; --text:rgba(255,255,255,.92); --muted:rgba(255,255,255,.65);
-      --panel:rgba(255,255,255,.06); --border:rgba(255,255,255,.12);
-      --primary:#6d5efc; --accent:#22c55e; --danger:#ef4444; --warn:#f59e0b;
-      --radius:18px; --radiusSm:12px; --fontScale:1; --navW:292px;
-    }
+    :root{ --navW:280px; --primary:#6d5efc; --accent:#22c55e; --bg:#0b1220; --text:rgba(255,255,255,.92); --muted:rgba(255,255,255,.65); --panel:rgba(255,255,255,.06); --border:rgba(255,255,255,.12); --radius:14px; --fontScale:1; }
+    /* Base reset */
     *{box-sizing:border-box}
     html,body{height:100%}
-    body{
-      margin:0; font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;
-      font-size:calc(14px * var(--fontScale)); color:var(--text);
-      background:
-        radial-gradient(1200px 700px at 10% 10%, rgba(109,94,252,.35), transparent 60%),
-        radial-gradient(900px 600px at 90% 30%, rgba(34,197,94,.18), transparent 60%),
-        linear-gradient(180deg,#070b14 0%,#0b1220 100%);
-    }
+    body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;color:var(--text);background:linear-gradient(180deg,#070b14 0%,#0b1220 100%);font-size:calc(14px * var(--fontScale));-webkit-font-smoothing:antialiased}
     a{color:inherit;text-decoration:none}
+
+    /* Layout */
     .app{display:grid;grid-template-columns:var(--navW) 1fr;min-height:100vh}
-    .sidebar{position:sticky;top:0;height:100vh;padding:18px 14px;border-right:1px solid var(--border);background:rgba(10,16,28,.55);backdrop-filter:blur(14px)}
-    .brand{display:flex;align-items:center;gap:10px;padding:10px 10px 14px;margin-bottom:10px}
-    .logo{width:38px;height:38px;border-radius:14px;background:linear-gradient(135deg,var(--primary),rgba(34,197,94,.95));display:grid;place-items:center;box-shadow:0 10px 30px rgba(109,94,252,.25)}
-    .logo svg{width:20px;height:20px}
-    .brand h1{font-size:14px;margin:0;line-height:1.1}
-    .brand p{margin:3px 0 0;font-size:12px;color:var(--muted)}
-    .pill{margin-left:auto;font-size:12px;padding:6px 10px;border-radius:999px;border:1px solid var(--border);background:rgba(255,255,255,.05)}
-    .secTitle{font-size:11px;color:var(--muted);padding:14px 10px 8px;text-transform:uppercase;letter-spacing:.12em}
-    .navItem{display:flex;align-items:center;gap:10px;padding:10px 10px;border-radius:14px;border:1px solid transparent;transition:.15s ease;user-select:none}
-    .navItem:hover{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.08)}
-    .navItem.active{background:linear-gradient(135deg,rgba(109,94,252,.25),rgba(34,197,94,.12));border-color:rgba(109,94,252,.35)}
-    .navItem svg{width:18px;height:18px;opacity:.9}
-    .navSub{margin:6px 0 0 34px;padding-left:10px;border-left:1px dashed rgba(255,255,255,.14);display:none}
+    .sidebar{padding:18px 14px;border-right:1px solid var(--border);background:rgba(10,16,28,.65);backdrop-filter:blur(8px)}
+    .brand{display:flex;align-items:center;gap:10px}
+    .logo{width:40px;height:40px;border-radius:10px;background:linear-gradient(135deg,var(--primary),var(--accent));display:grid;place-items:center;color:#06121a;font-weight:700}
+    .brand h1{margin:0;font-size:15px}
+    .rolePill{margin-left:auto;padding:6px 10px;border-radius:999px;border:1px solid var(--border);background:rgba(255,255,255,.03);font-size:12px}
+
+    .nav{margin-top:14px}
+    .secTitle{font-size:11px;color:var(--muted);padding:10px 6px 6px;text-transform:uppercase}
+    .navItem{display:flex;align-items:center;gap:10px;padding:10px;border-radius:10px;border:1px solid transparent;cursor:pointer}
+    .navItem:hover{background:rgba(255,255,255,.03)}
+    .navItem.active{background:linear-gradient(90deg, rgba(109,94,252,.12), rgba(34,197,94,.05));border-color:rgba(109,94,252,.08)}
+    .navSub{margin-left:18px;padding-left:8px;border-left:1px dashed rgba(255,255,255,.05);display:none}
     .navSub.open{display:block}
-    .navSub a{display:block;padding:8px 10px;font-size:12.5px;border-radius:12px;color:rgba(255,255,255,.82)}
-    .navSub a:hover{background:rgba(255,255,255,.06)}
 
-    .main{padding:22px 22px 28px}
-    .top{display:flex;gap:12px;align-items:center;justify-content:space-between;margin-bottom:14px}
-    .top h2{margin:0;font-size:18px}
-    .top p{margin:6px 0 0;color:var(--muted);font-size:12.5px}
-    .btn{border:1px solid var(--border);background:rgba(255,255,255,.06);color:var(--text);padding:10px 12px;border-radius:14px;cursor:pointer;transition:.15s ease;font-size:13px;display:inline-flex;align-items:center;gap:8px}
-    .btn:hover{background:rgba(255,255,255,.09);transform:translateY(-1px)}
-    .btn:active{transform:translateY(0)}
-    .btn.primary{border-color:rgba(109,94,252,.45);background:linear-gradient(135deg,rgba(109,94,252,.38),rgba(34,197,94,.18))}
-    .btn.danger{border-color:rgba(239,68,68,.45);background:rgba(239,68,68,.10)}
+    /* Top bar (mobile) */
+    .topbar{display:flex;align-items:center;justify-content:space-between;padding:12px 18px;border-bottom:1px solid rgba(255,255,255,.02);background:transparent}
+    .hamburger{display:none;border:1px solid var(--border);background:rgba(255,255,255,.03);padding:8px;border-radius:8px;cursor:pointer}
 
-    .grid{display:grid;grid-template-columns:1.15fr .85fr;gap:14px;margin-top:14px}
-    .card{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);padding:14px}
-    .cardHead{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:10px}
-    .cardHead h3{margin:0;font-size:14px}
-    .cardHead p{margin:6px 0 0;font-size:12.5px;color:var(--muted)}
-    .badge{font-size:11px;padding:6px 10px;border-radius:999px;border:1px solid var(--border);background:rgba(255,255,255,.05);color:rgba(255,255,255,.85);white-space:nowrap}
-    .row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}
-    .field{border:1px solid rgba(255,255,255,.10);background:rgba(255,255,255,.04);border-radius:16px;padding:12px}
-    .field label{display:block;font-size:12px;color:var(--muted);margin-bottom:8px}
-    .input,select{width:100%;border:1px solid rgba(255,255,255,.12);background:rgba(10,16,28,.45);color:var(--text);padding:10px 12px;border-radius:12px;outline:none;font-size:13px}
-    .mini{font-size:12px;color:var(--muted);margin-top:8px;line-height:1.4}
-    .divider{height:1px;background:rgba(255,255,255,.10);margin:12px 0}
-    .switch{display:flex;align-items:center;justify-content:space-between;gap:12px}
-    .toggle{position:relative;width:46px;height:26px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.14);border-radius:999px;cursor:pointer;transition:.15s ease;flex:0 0 auto}
-    .toggle::after{content:"";position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:rgba(255,255,255,.88);transition:.15s ease}
-    .toggle.on{background:rgba(34,197,94,.22);border-color:rgba(34,197,94,.38)}
-    .toggle.on::after{left:22px;background:rgba(255,255,255,.95)}
-    .warn{border:1px solid rgba(245,158,11,.25);background:rgba(245,158,11,.08)}
-    .dangerZone{border:1px solid rgba(239,68,68,.26);background:rgba(239,68,68,.07)}
-    .menuGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-    .menuChip{padding:10px;border-radius:14px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.04);display:flex;align-items:center;justify-content:space-between;gap:10px}
-    .menuChip span{font-size:12.5px;color:rgba(255,255,255,.85)}
-    .toast{position:fixed;bottom:18px;right:18px;width:min(420px,calc(100vw - 36px));background:rgba(12,18,32,.88);border:1px solid rgba(255,255,255,.14);border-radius:16px;padding:12px;display:none;backdrop-filter:blur(12px)}
-    .toast.show{display:block}
-    .toastTitle{font-size:13px;margin:0 0 4px}
-    .toastMsg{font-size:12.5px;color:var(--muted);margin:0}
+    /* Main content */
+    .main{padding:18px}
+    .panels{display:grid;grid-template-columns:1fr 420px;gap:14px}
+    .card{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:12px}
+    .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .field{background:rgba(255,255,255,.02);padding:10px;border-radius:10px;border:1px solid rgba(255,255,255,.04)}
+    .label{font-size:12px;color:var(--muted);margin-bottom:8px}
+    .input,select{width:100%;padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,.08);background:transparent;color:var(--text)}
+    .toggle{width:46px;height:26px;border-radius:999px;background:rgba(255,255,255,.12);position:relative;cursor:pointer}
+    .toggle::after{content:'';position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:rgba(255,255,255,.95);transition:.14s}
+    .toggle.on{background:linear-gradient(90deg,var(--primary),var(--accent));}
+    .toggle.on::after{left:22px}
 
-    @media (max-width:980px){.app{grid-template-columns:1fr}.sidebar{position:relative;height:auto;border-right:none;border-bottom:1px solid var(--border)}.grid{grid-template-columns:1fr}}
+    .actions{display:flex;gap:8px;margin-left:auto}
+    .btn{padding:8px 10px;border-radius:8px;border:1px solid var(--border);background:rgba(255,255,255,.03);cursor:pointer}
+    .btn.primary{background:linear-gradient(90deg,var(--primary),var(--accent));border:none;color:#06121a}
+    .mini{font-size:12px;color:var(--muted);margin-top:6px}
+
+    /* Bluetooth scan list */
+    .deviceList{max-height:220px;overflow:auto;margin-top:8px}
+    .deviceItem{padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,.04);margin-bottom:8px;display:flex;justify-content:space-between;align-items:center}
+
+    /* Responsive */
+    @media (max-width:980px){
+      .app{grid-template-columns:1fr}
+      .sidebar{position:fixed;left:-100%;top:0;width:var(--navW);height:100vh;z-index:40;transition:left .24s}
+      .sidebar.open{left:0}
+      .topbar{display:flex}
+      .hamburger{display:inline-flex}
+      .panels{grid-template-columns:1fr}
+      .rolePill{display:none}
+    }
+
+    /* overlay when sidebar open */
+    .overlay{position:fixed;left:0;top:0;width:100%;height:100%;background:rgba(0,0,0,.4);z-index:30;display:none}
+    .overlay.show{display:block}
   </style>
+  <script>
+    // Apply theme ASAP to avoid flash. Read localStorage.webpos_theme if exists.
+    (function(){
+      try{
+        const raw = localStorage.getItem('webpos_theme');
+        if(raw){
+          const t = JSON.parse(raw);
+          if(t){
+            document.documentElement.style.setProperty('--primary', t.primary || getComputedStyle(document.documentElement).getPropertyValue('--primary'));
+            document.documentElement.style.setProperty('--accent', t.accent || getComputedStyle(document.documentElement).getPropertyValue('--accent'));
+            document.documentElement.style.setProperty('--fontScale', String(t.fontScale||1));
+            if(t.darkMode===false){
+              document.body.style.background = 'linear-gradient(180deg,#f6f7fb 0%,#eef2ff 100%)';
+              document.documentElement.style.setProperty('--text','rgba(17,24,39,.92)');
+            }
+          }
+        }
+      }catch(e){console.warn('applyTheme early fail',e)}
+    })();
+  </script>
 </head>
 <body>
+  <div class="topbar">
+    <div style="display:flex;align-items:center;gap:12px">
+      <button class="hamburger" id="hamburger">☰</button>
+      <div style="font-weight:700;color:var(--text)">Pengaturan</div>
+    </div>
+    <div class="actions">
+      <button class="btn" id="btnResetLocal">Reset</button>
+      <button class="btn primary" id="btnSave">Simpan</button>
+    </div>
+  </div>
+
   <div class="app">
-    <aside class="sidebar">
-      <div class="brand">
-        <div class="logo" aria-hidden="true">
-          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7 12.5l3 3 7-7" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <aside class="sidebar" id="sidebar">
+      <div class="brand"><div class="logo">WP</div><div><h1>WebPOS</h1><div style="font-size:12px;color:var(--muted)">Pengaturan</div></div><div class="rolePill" id="rolePill">Role</div></div>
+
+      <nav class="nav">
+        <div class="secTitle">Utama</div>
+        <div class="navItem" data-href="index.html">🏠 <div>Dashboard</div></div>
+        <div class="navItem" data-href="page-kasir.html">🛒 <div>Kasir</div></div>
+        <div class="navItem" data-href="page-produk.html">📦 <div>Produk</div></div>
+
+        <div class="secTitle">Transaksi</div>
+        <div class="navItem" data-href="page-riwayat-transaksi.html">🧾 <div>Riwayat Transaksi</div></div>
+        <div class="navItem" id="kasMgmtToggle">💰 <div>Kas Management</div></div>
+        <div class="navSub" id="kasMgmtSub">
+          <a href="page-ringkasan-kas.html">Ringkasan Kas</a>
+          <a href="page-modal-harian.html">Modal Harian</a>
+          <a href="page-kas-masuk.html">Kas Masuk</a>
+          <a href="page-kas-keluar.html">Kas Keluar</a>
+          <a href="page-kas-shift.html">Kas & Shift</a>
+          <a href="page-closing-shift.html">Closing Shift</a>
+          <a href="page-top-up.html">Top Up</a>
+          <a href="page-tarik-tunai.html">Tarik Tunai</a>
         </div>
-        <div>
-          <h1>WebPOS</h1>
-          <p>V3 • Pengaturan Terpusat</p>
-        </div>
-        <div class="pill" id="rolePill">Role: kasir</div>
-      </div>
 
-      <div class="secTitle">Utama</div>
-      <a class="navItem" href="index.html"><span>🏠</span><div>Dashboard</div></a>
-      <a class="navItem" href="page-kasir.html"><span>🛒</span><div>Kasir</div></a>
-      <a class="navItem" href="page-produk.html"><span>📦</span><div>Produk</div></a>
+        <div class="secTitle">Laporan</div>
+        <div class="navItem" data-href="page-laporan-penjualan.html">📈 <div>Laporan Penjualan</div></div>
+        <div class="navItem" data-href="page-laporan-stok.html">📊 <div>Laporan Stok</div></div>
+        <div class="navItem" data-href="page-barang-terlaris.html">🔥 <div>Barang Terlaris</div></div>
 
-      <div class="secTitle">Transaksi</div>
-      <a class="navItem" href="page-riwayat-transaksi.html"><span>🧾</span><div>Riwayat Transaksi</div></a>
-      <div class="navItem" id="kasMgmtToggle" role="button" tabindex="0" aria-expanded="false"><span>💰</span><div>Kas Management</div><div style="margin-left:auto;opacity:.75" id="kasMgmtChevron">▸</div></div>
-      <div class="navSub" id="kasMgmtSub">
-        <a href="page-ringkasan-kas.html">Ringkasan Kas</a>
-        <a href="page-modal-harian.html">Modal Harian</a>
-        <a href="page-kas-masuk.html">Kas Masuk</a>
-        <a href="page-kas-keluar.html">Kas Keluar</a>
-        <a href="page-kas-shift.html">Kas &amp; Shift</a>
-        <a href="page-closing-shift.html">Closing Shift</a>
-        <a href="page-top-up.html">Top Up</a>
-        <a href="page-tarik-tunai.html">Tarik Tunai</a>
-      </div>
-      <a class="navItem" href="page-pembelian-restock.html"><span>🧺</span><div>Pembelian / Restock</div></a>
-      <a class="navItem" href="page-hutang-piutang.html"><span>📒</span><div>Hutang &amp; Piutang</div></a>
-
-      <div class="secTitle">Laporan</div>
-      <a class="navItem" href="page-laporan-penjualan.html"><span>📈</span><div>Laporan Penjualan</div></a>
-      <a class="navItem" href="page-laporan-stok.html"><span>📊</span><div>Laporan Stok</div></a>
-      <a class="navItem" href="page-barang-terlaris.html"><span>🔥</span><div>Barang Terlaris</div></a>
-
-      <div class="secTitle">Integrasi</div>
-      <a class="navItem" href="page-saldo-telegram.html"><span>✈️</span><div>Saldo Telegram</div></a>
-      <a class="navItem" href="page-data-pelanggan.html"><span>👥</span><div>Data Pelanggan</div></a>
-
-      <div class="secTitle">Sistem</div>
-      <a class="navItem" href="page-pengguna.html"><span>👤</span><div>Pengguna</div></a>
-      <a class="navItem active" href="page-setting.html" aria-current="page"><span>⚙️</span><div>Pengaturan</div></a>
-      <a class="navItem" href="page-backup-sync.html"><span>🔄</span><div>Backup &amp; Sync</div></a>
-      <a class="navItem" href="page-log-aktivitas.html"><span>🗂️</span><div>Log Aktivitas</div></a>
-      <a class="navItem" href="page-printer-struk.html"><span>🖨️</span><div>Printer &amp; Struk</div></a>
-      <a class="navItem" href="page-reset-data.html"><span>🗑️</span><div>Reset Data</div></a>
-
-      <div style="padding:14px 10px;color:var(--muted);font-size:12px">
-        <div style="border-top:1px solid rgba(255,255,255,.10);padding-top:12px">Semua pengaturan di sini akan diterapkan ke semua menu (V3).</div>
-      </div>
+        <div class="secTitle">Sistem</div>
+        <div class="navItem" data-href="page-pengguna.html">👤 <div>Pengguna</div></div>
+        <div class="navItem active" data-href="page-setting.html">⚙️ <div>Pengaturan</div></div>
+        <div class="navItem" data-href="page-printer-struk.html">🖨️ <div>Printer & Struk</div></div>
+      </nav>
     </aside>
 
     <main class="main">
-      <div class="top">
+      <div class="panels">
         <div>
-          <h2>Pengaturan</h2>
-          <p>Tema global, role/akses menu, dan koneksi Bluetooth untuk printer struk.</p>
+          <div class="card">
+            <h3>Tema Global</h3>
+            <div class="row" style="margin-top:8px">
+              <div class="field">
+                <div class="label">Dark Mode</div>
+                <div style="display:flex;align-items:center;justify-content:space-between"><div class="mini">Aktifkan mode gelap</div><div class="toggle" id="tDark" role="switch" aria-checked="false"></div></div>
+              </div>
+              <div class="field">
+                <div class="label">Skala Font</div>
+                <select id="fontScale" class="input"><option value="0.95">Kecil</option><option value="1" selected>Normal</option><option value="1.08">Besar</option></select>
+              </div>
+            </div>
+
+            <div style="display:flex;gap:10px;margin-top:10px">
+              <div style="flex:1" class="field"><div class="label">Warna Primary</div><input id="primary" type="color" class="input" value="#6d5efc"></div>
+              <div style="flex:1" class="field"><div class="label">Warna Accent</div><input id="accent" type="color" class="input" value="#22c55e"></div>
+            </div>
+
+            <div class="mini">Perubahan tema akan langsung terlihat pada preview dan akan disimpan saat klik "Simpan".</div>
+          </div>
+
+          <div class="card" style="margin-top:12px">
+            <h3>Role & Akses Menu</h3>
+            <div style="margin-top:8px" class="field"><div class="label">Role Aktif (Preview)</div><select id="roleSelect" class="input"><option value="kasir">Kasir</option><option value="admin">Admin</option><option value="owner">Owner</option><option value="developer">Developer</option></select><div class="mini">Pilih role untuk melihat menu yang muncul di sidebar.</div></div>
+
+            <div style="margin-top:10px" class="field">
+              <div class="label">Visibilitas Menu</div>
+              <div id="menuGrid" style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:8px"></div>
+            </div>
+          </div>
+
+          <div class="card" style="margin-top:12px">
+            <h3>Notifikasi & Sistem</h3>
+            <div class="row" style="margin-top:8px">
+              <div class="field"><div class="label">Notifikasi Stok Menipis</div><div style="display:flex;justify-content:space-between;align-items:center"><div class="mini">Tampilkan alert jika stok kurang</div><div class="toggle" id="tLowStock"></div></div></div>
+              <div class="field"><div class="label">Suara Transaksi</div><div style="display:flex;justify-content:space-between;align-items:center"><div class="mini">Bunyi saat pembayaran sukses</div><div class="toggle" id="tSound"></div></div></div>
+            </div>
+            <div style="margin-top:10px" class="field"><div class="label">Zona Waktu</div><select id="timezone" class="input"><option>Asia/Jakarta</option><option>Asia/Makassar</option><option>Asia/Jayapura</option></select></div>
+          </div>
         </div>
-        <div style="display:flex;gap:10px;align-items:center">
-          <button class="btn" id="btnResetLocal">Reset Pengaturan</button>
-          <button class="btn primary" id="btnSave">Simpan</button>
-        </div>
+
+        <aside>
+          <div class="card">
+            <h3>Bluetooth — Pencarian Device</h3>
+            <div style="margin-top:8px">
+              <div class="field"><div class="label">Aktifkan Bluetooth</div><div style="display:flex;justify-content:space-between;align-items:center"><div class="mini">Tampilkan menu Printer jika aktif</div><div class="toggle" id="tBt"></div></div></div>
+              <div class="field" style="margin-top:8px"><div class="label">Ukuran Kertas</div><select id="paperSize" class="input"><option value="58">58mm</option><option value="80">80mm</option></select></div>
+              <div class="field" style="margin-top:8px"><div class="label">Nama Device (terakhir)</div><input id="btDeviceName" class="input" placeholder="Contoh: Printer-Kasir"></div>
+
+              <div style="margin-top:8px;display:flex;gap:8px">
+                <button class="btn" id="btnScan">Cari Bluetooth</button>
+                <button class="btn" id="btnClearDevices">Bersihkan</button>
+              </div>
+
+              <div class="deviceList" id="deviceList"></div>
+              <div class="mini">Catatan: fitur 'Cari Bluetooth' memakai Web Bluetooth API dan butuh HTTPS + dukungan browser (Chrome/Edge Android). Pengguna perlu konfirmasi perangkat di dialog browser.</div>
+            </div>
+          </div>
+
+          <div class="card" style="margin-top:12px">
+            <h3>Zona Bahaya</h3>
+            <div class="field danger" style="margin-top:8px"><div class="label">Reset Data (demo)</div><div class="mini">Aksi penuh tersedia di menu Reset Data.</div><div style="display:flex;gap:8px;margin-top:8px"><button class="btn danger" id="btnDanger">Reset</button><button class="btn" id="btnExport">Export</button></div></div>
+          </div>
+        </aside>
       </div>
 
-      <div class="grid">
-        <section class="card">
-          <div class="cardHead"><div><h3>Tema Global</h3><p>Disimpan ke localStorage dan dibaca semua halaman lain.</p></div><span class="badge" id="themeBadge">Belum disimpan</span></div>
-          <div class="row">
-            <div class="field">
-              <div class="switch"><div><div style="font-size:13px;margin-bottom:2px">Dark Mode</div><div style="font-size:12px;color:var(--muted)">Mode gelap/terang.</div></div><div class="toggle" id="tDark"></div></div>
-            </div>
-            <div class="field">
-              <label>Skala Font</label>
-              <select id="fontScale"><option value="0.95">Kecil</option><option value="1" selected>Normal</option><option value="1.08">Besar</option></select>
-              <div class="mini">Mengubah ukuran teks seluruh aplikasi.</div>
-            </div>
-          </div>
-          <div class="row">
-            <div class="field"><label>Warna Primary</label><input class="input" id="primary" type="color" value="#6d5efc"><div class="mini">Tombol utama & highlight.</div></div>
-            <div class="field"><label>Warna Accent</label><input class="input" id="accent" type="color" value="#22c55e"><div class="mini">Sukses/badge/aksen.</div></div>
-          </div>
-          <div class="divider"></div>
-          <div class="field"><label>Preview</label><div style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn primary" type="button">Tombol Utama</button><button class="btn" type="button">Sekunder</button><button class="btn danger" type="button">Bahaya</button><span class="badge" style="border-color:rgba(34,197,94,.38);background:rgba(34,197,94,.12)">Sukses</span></div><div class="mini">Preview hanya contoh UI.</div></div>
-        </section>
-
-        <section class="card">
-          <div class="cardHead"><div><h3>Role & Akses Menu</h3><p>Role: admin, owner, kasir, developer.</p></div><span class="badge">Preview</span></div>
-          <div class="field">
-            <label>Role Aktif (Preview)</label>
-            <select id="roleSelect"><option value="kasir">Kasir</option><option value="admin">Admin</option><option value="owner">Owner</option><option value="developer">Developer</option></select>
-            <div class="mini">Mengatur menu yang terlihat di sidebar (simulasi akses).</div>
-          </div>
-          <div class="divider"></div>
-          <div class="field">
-            <label>Visibilitas Menu untuk Role Aktif</label>
-            <div class="menuGrid" id="menuGrid"></div>
-            <div class="mini">Developer default melihat semua. Anda bisa ubah tiap role lalu Simpan.</div>
-          </div>
-        </section>
-
-        <section class="card">
-          <div class="cardHead"><div><h3>Bluetooth (Printer & Struk)</h3><p>Simpan konfigurasi printer agar halaman lain tinggal pakai.</p></div><span class="badge" id="btBadge">Nonaktif</span></div>
-          <div class="row">
-            <div class="field">
-              <div class="switch"><div><div style="font-size:13px;margin-bottom:2px">Aktifkan Bluetooth</div><div style="font-size:12px;color:var(--muted)">Untuk menu Printer & Struk.</div></div><div class="toggle" id="tBt"></div></div>
-            </div>
-            <div class="field">
-              <label>Ukuran Kertas</label>
-              <select id="paperSize"><option value="58">58mm</option><option value="80">80mm</option></select>
-              <div class="mini">Mempengaruhi lebar struk.</div>
-            </div>
-          </div>
-          <div class="row">
-            <div class="field"><label>Nama Device (terakhir)</label><input class="input" id="btDeviceName" placeholder="Contoh: Printer-Kasir"><div class="mini">Disimpan untuk referensi.</div></div>
-            <div class="field"><label>Auto Connect</label><select id="btAuto"><option value="false">Tidak</option><option value="true">Ya</option></select><div class="mini">Jika browser mendukung, bisa dicoba otomatis.</div></div>
-          </div>
-          <div class="field" style="margin-top:12px">
-            <label>GATT UUID (opsional)</label>
-            <div class="row">
-              <div><input class="input" id="btService" placeholder="Service UUID"></div>
-              <div><input class="input" id="btChar" placeholder="Characteristic UUID"></div>
-            </div>
-            <div class="mini">Isi jika printer perlu UUID khusus (Web Bluetooth).</div>
-          </div>
-        </section>
-
-        <section class="card">
-          <div class="cardHead"><div><h3>Notifikasi & Sistem</h3><p>Setting umum yang dipakai semua halaman.</p></div><span class="badge">Sistem</span></div>
-          <div class="row">
-            <div class="field"><div class="switch"><div><div style="font-size:13px;margin-bottom:2px">Notifikasi Stok Menipis</div><div style="font-size:12px;color:var(--muted)">Alert jika stok &lt; min.</div></div><div class="toggle" id="tLowStock"></div></div></div>
-            <div class="field"><div class="switch"><div><div style="font-size:13px;margin-bottom:2px">Suara Transaksi</div><div style="font-size:12px;color:var(--muted)">Bunyi saat sukses.</div></div><div class="toggle" id="tSound"></div></div></div>
-          </div>
-          <div class="row">
-            <div class="field"><label>Zona Waktu</label><select id="timezone"><option value="Asia/Jakarta">Asia/Jakarta (WIB)</option><option value="Asia/Makassar">Asia/Makassar (WITA)</option><option value="Asia/Jayapura">Asia/Jayapura (WIT)</option></select></div>
-            <div class="field warn"><label>PPN Default</label><select id="ppn"><option value="0">0%</option><option value="11" selected>11%</option><option value="12">12%</option></select><div class="mini">Default mengikuti V2 Anda (11%).</div></div>
-          </div>
-          <div class="divider"></div>
-          <div class="field dangerZone"><label>Zona Bahaya (Demo UI)</label><div style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn danger" type="button" id="btnDanger">Reset Data</button><button class="btn" type="button" id="btnExport">Export Backup</button></div><div class="mini">Aksi real akan ada di menu Reset Data dan Backup & Sync.</div></div>
-        </section>
-      </div>
-
-      <section class="card" style="margin-top:14px">
-        <div class="cardHead"><div><h3>Cara Apply ke Semua Halaman</h3><p>Karena Anda pakai 1 menu = 1 page HTML.</p></div><span class="badge">Panduan</span></div>
-        <div class="mini" style="color:rgba(255,255,255,.78)">
-          Semua halaman V3 akan punya fungsi <b>applyTheme()</b> yang membaca <b>localStorage.webpos_theme</b> lalu mengatur CSS variable seperti <b>--primary</b>, <b>--accent</b>, <b>--fontScale</b>.
-          Role dan akses menu dibaca dari <b>localStorage.webpos_role</b> dan mapping <b>localStorage.webpos_role_menu</b>.
-          Konfigurasi Bluetooth dibaca dari <b>localStorage.webpos_bt</b> dan dipakai oleh halaman <b>Printer &amp; Struk</b> serta halaman Kasir saat cetak.
-        </div>
-      </section>
+      <div style="margin-top:12px" class="card"><div class="label">Catatan</div><div class="mini">Tema tersimpan di <code>localStorage.webpos_theme</code>. Semua halaman harus memanggil <code>applyTheme()</code> pada awal load untuk mencegah "flash" tema.</div></div>
 
     </main>
   </div>
 
-  <div class="toast" id="toast" role="status" aria-live="polite">
-    <p class="toastTitle" id="toastTitle">Tersimpan</p>
-    <p class="toastMsg" id="toastMsg">Pengaturan berhasil disimpan.</p>
-  </div>
+  <div class="overlay" id="overlay"></div>
 
   <script>
-    const LS={theme:'webpos_theme',bt:'webpos_bt',sys:'webpos_sys',role:'webpos_role',roleMenu:'webpos_role_menu'};
+    // Helper storage & defaults
+    const LS = { theme: 'webpos_theme', bt: 'webpos_bt', sys: 'webpos_sys', role: 'webpos_role', roleMenu: 'webpos_role_menu' };
+    const DEFAULTS = { theme:{ darkMode:true, primary:'#6d5efc', accent:'#22c55e', fontScale:1 }, bt:{ enabled:false, deviceName:'', paperSize:'58' }, sys:{ lowStockNotif:true, txSound:true, timezone:'Asia/Jakarta', ppnRate:11 }, role:'kasir' };
+    function safeParse(s,f){ try{ return JSON.parse(s); }catch{return f} }
+    function getStored(k,f){ const raw=localStorage.getItem(k); return raw ? safeParse(raw,f) : structuredClone(f); }
+    function setStored(k,v){ localStorage.setItem(k, JSON.stringify(v)); }
 
-    const DEFAULTS={
-      theme:{darkMode:true,primary:'#6d5efc',accent:'#22c55e',fontScale:1},
-      bt:{enabled:false,deviceName:'',autoConnect:false,paperSize:'58',serviceUuid:'',charUuid:''},
-      sys:{lowStockNotif:true,txSound:true,timezone:'Asia/Jakarta',ppnRate:11},
-      role:'kasir',
-      roleMenu:{
-        kasir:{dashboard:true,kasir:true,produk:true,riwayat_transaksi:true,kas_management:true,pembelian_restock:false,hutang_piutang:true,laporan_penjualan:false,laporan_stok:false,barang_terlaris:false,saldo_telegram:true,data_pelanggan:true,pengguna:false,pengaturan:true,backup_sync:false,log_aktivitas:false,printer_struk:true,reset_data:false},
-        admin:{dashboard:true,kasir:true,produk:true,riwayat_transaksi:true,kas_management:true,pembelian_restock:true,hutang_piutang:true,laporan_penjualan:true,laporan_stok:true,barang_terlaris:true,saldo_telegram:true,data_pelanggan:true,pengguna:true,pengaturan:true,backup_sync:true,log_aktivitas:true,printer_struk:true,reset_data:false},
-        owner:{dashboard:true,kasir:true,produk:true,riwayat_transaksi:true,kas_management:true,pembelian_restock:true,hutang_piutang:true,laporan_penjualan:true,laporan_stok:true,barang_terlaris:true,saldo_telegram:true,data_pelanggan:true,pengguna:true,pengaturan:true,backup_sync:true,log_aktivitas:true,printer_struk:true,reset_data:true},
-        developer:{dashboard:true,kasir:true,produk:true,riwayat_transaksi:true,kas_management:true,pembelian_restock:true,hutang_piutang:true,laporan_penjualan:true,laporan_stok:true,barang_terlaris:true,saldo_telegram:true,data_pelanggan:true,pengguna:true,pengaturan:true,backup_sync:true,log_aktivitas:true,printer_struk:true,reset_data:true}
-      }
-    };
+    // UI refs
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('overlay');
+    const hamburger = document.getElementById('hamburger');
+    const tDark = document.getElementById('tDark');
+    const tBt = document.getElementById('tBt');
+    const deviceList = document.getElementById('deviceList');
 
-    const MENU_DEFS=[
-      {key:'dashboard',label:'Dashboard'},
-      {key:'kasir',label:'Kasir'},
-      {key:'produk',label:'Produk'},
-      {key:'riwayat_transaksi',label:'Riwayat Transaksi'},
-      {key:'kas_management',label:'Kas Management (grup + sub)'},
-      {key:'pembelian_restock',label:'Pembelian / Restock'},
-      {key:'hutang_piutang',label:'Hutang & Piutang'},
-      {key:'laporan_penjualan',label:'Laporan Penjualan'},
-      {key:'laporan_stok',label:'Laporan Stok'},
-      {key:'barang_terlaris',label:'Barang Terlaris'},
-      {key:'saldo_telegram',label:'Saldo Telegram'},
-      {key:'data_pelanggan',label:'Data Pelanggan'},
-      {key:'pengguna',label:'Pengguna'},
-      {key:'pengaturan',label:'Pengaturan'},
-      {key:'backup_sync',label:'Backup & Sync'},
-      {key:'log_aktivitas',label:'Log Aktivitas'},
-      {key:'printer_struk',label:'Printer & Struk'},
-      {key:'reset_data',label:'Reset Data'}
-    ];
+    // Open/close sidebar on mobile
+    function openSidebar(){ sidebar.classList.add('open'); overlay.classList.add('show'); }
+    function closeSidebar(){ sidebar.classList.remove('open'); overlay.classList.remove('show'); }
+    hamburger.addEventListener('click', ()=>{ if(sidebar.classList.contains('open')) closeSidebar(); else openSidebar(); });
+    overlay.addEventListener('click', closeSidebar);
 
-    function safeParse(s,f){try{return JSON.parse(s)}catch{return f}}
-    function getStored(k,f){const raw=localStorage.getItem(k);if(!raw) return structuredClone(f);const p=safeParse(raw,null);return p??structuredClone(f)}
-    function setStored(k,v){localStorage.setItem(k,JSON.stringify(v))}
+    // Map menu defs (short)
+    const MENU_DEFS=[ 'dashboard','kasir','produk','riwayat_transaksi','kas_management','pembelian_restock','hutang_piutang','laporan_penjualan','laporan_stok','barang_terlaris','saldo_telegram','data_pelanggan','pengguna','pengaturan','backup_sync','log_aktivitas','printer_struk','reset_data' ];
 
-    function toast(title,msg){
-      const t=document.getElementById('toast');
-      document.getElementById('toastTitle').textContent=title;
-      document.getElementById('toastMsg').textContent=msg;
-      t.classList.add('show');
-      clearTimeout(toast._tm);
-      toast._tm=setTimeout(()=>t.classList.remove('show'),2200);
-    }
+    // Render menu grid toggles
+    function renderMenuGrid(role, roleMenu){ const grid = document.getElementById('menuGrid'); grid.innerHTML = ''; const current = (roleMenu && roleMenu[role]) ? structuredClone(roleMenu[role]) : {}; for(const key of MENU_DEFS){ const chip = document.createElement('div'); chip.style.display='flex'; chip.style.justifyContent='space-between'; chip.style.alignItems='center'; chip.style.padding='8px'; chip.style.border='1px solid rgba(255,255,255,.04)'; chip.style.borderRadius='8px'; chip.style.background='rgba(255,255,255,.02)'; const span = document.createElement('span'); span.textContent = key.replace(/_/g,' '); const tog = document.createElement('div'); tog.className='toggle'; const on = current[key]===undefined ? true : !!current[key]; if(on) tog.classList.add('on'); tog.dataset.on = on ? '1':'0'; tog.addEventListener('click', ()=>{ const now = tog.dataset.on==='1'; tog.dataset.on = now ? '0':'1'; tog.classList.toggle('on', !now); current[key] = !now; }); chip.appendChild(span); chip.appendChild(tog); grid.appendChild(chip); }
+      grid._draft = current; }
 
-    function setToggle(el,on){el.classList.toggle('on',!!on);el.dataset.on=on?'1':'0'}
-    function getToggle(el){return el.dataset.on==='1'}
+    // Apply theme live
+    function applyTheme(theme){ document.documentElement.style.setProperty('--primary', theme.primary); document.documentElement.style.setProperty('--accent', theme.accent); document.documentElement.style.setProperty('--fontScale', String(theme.fontScale||1)); if(theme.darkMode===false){ document.body.style.background='linear-gradient(180deg,#f6f7fb 0%,#eef2ff 100%)'; document.documentElement.style.setProperty('--text','rgba(17,24,39,.92)'); } }
 
-    function applyTheme(theme){
-      const r=document.documentElement;
-      r.style.setProperty('--primary', theme.primary);
-      r.style.setProperty('--accent', theme.accent);
-      r.style.setProperty('--fontScale', String(theme.fontScale||1));
-
-      if(theme.darkMode){
-        r.style.setProperty('--bg','#0b1220');
-        r.style.setProperty('--text','rgba(255,255,255,.92)');
-        r.style.setProperty('--muted','rgba(255,255,255,.65)');
-        r.style.setProperty('--panel','rgba(255,255,255,.06)');
-        r.style.setProperty('--border','rgba(255,255,255,.12)');
-        document.body.style.background=
-          'radial-gradient(1200px 700px at 10% 10%, rgba(109,94,252,.35), transparent 60%),'+
-          'radial-gradient(900px 600px at 90% 30%, rgba(34,197,94,.18), transparent 60%),'+
-          'linear-gradient(180deg,#070b14 0%,#0b1220 100%)';
-      }else{
-        r.style.setProperty('--bg','#f6f7fb');
-        r.style.setProperty('--text','rgba(17,24,39,.92)');
-        r.style.setProperty('--muted','rgba(17,24,39,.62)');
-        r.style.setProperty('--panel','rgba(17,24,39,.06)');
-        r.style.setProperty('--border','rgba(17,24,39,.14)');
-        document.body.style.background=
-          'radial-gradient(1200px 700px at 10% 10%, rgba(109,94,252,.18), transparent 60%),'+
-          'radial-gradient(900px 600px at 90% 30%, rgba(34,197,94,.10), transparent 60%),'+
-          'linear-gradient(180deg,#f6f7fb 0%,#eef2ff 100%)';
-      }
-    }
-
-    function applyRoleVisibility(role, roleMenu){
-      document.getElementById('rolePill').textContent = 'Role: ' + role;
-      const m = roleMenu[role] || roleMenu.developer;
-
-      // Simple: hide sidebar items by matching href filename to key set.
-      // Karena ini versi ringkas, kita hanya hide per "group" menu (bukan sub per item).
-      const mapHrefToKey = {
-        'index.html':'dashboard',
-        'page-kasir.html':'kasir',
-        'page-produk.html':'produk',
-        'page-riwayat-transaksi.html':'riwayat_transaksi',
-        'page-pembelian-restock.html':'pembelian_restock',
-        'page-hutang-piutang.html':'hutang_piutang',
-        'page-laporan-penjualan.html':'laporan_penjualan',
-        'page-laporan-stok.html':'laporan_stok',
-        'page-barang-terlaris.html':'barang_terlaris',
-        'page-saldo-telegram.html':'saldo_telegram',
-        'page-data-pelanggan.html':'data_pelanggan',
-        'page-pengguna.html':'pengguna',
-        'page-setting.html':'pengaturan',
-        'page-backup-sync.html':'backup_sync',
-        'page-log-aktivitas.html':'log_aktivitas',
-        'page-printer-struk.html':'printer_struk',
-        'page-reset-data.html':'reset_data'
-      };
-
-      document.querySelectorAll('.sidebar a.navItem').forEach(a=>{
-        const href=(a.getAttribute('href')||'').trim();
-        const key=mapHrefToKey[href];
-        if(!key) return;
-        a.style.display = m[key] ? 'flex' : 'none';
+    // Apply role visibility on sidebar items
+    function applyRoleVisibility(role, roleMenu){ document.getElementById('rolePill').textContent = 'Role: ' + role; const mapHrefToKey = { 'index.html':'dashboard','page-kasir.html':'kasir','page-produk.html':'produk','page-riwayat-transaksi.html':'riwayat_transaksi','page-pembelian-restock.html':'pembelian_restock','page-hutang-piutang.html':'hutang_piutang','page-laporan-penjualan.html':'laporan_penjualan','page-laporan-stok.html':'laporan_stok','page-barang-terlaris.html':'barang_terlaris','page-saldo-telegram.html':'saldo_telegram','page-data-pelanggan.html':'data_pelanggan','page-pengguna.html':'pengguna','page-setting.html':'pengaturan','page-backup-sync.html':'backup_sync','page-log-aktivitas.html':'log_aktivitas','page-printer-struk.html':'printer_struk','page-reset-data.html':'reset_data' };
+      document.querySelectorAll('.navItem, .navItem[data-href]').forEach(a=>{
+        const key = a.dataset.href ? (mapHrefToKey[a.dataset.href]||null) : null;
+        if(!key) return; const show = (roleMenu && roleMenu[role] && roleMenu[role][key] !== undefined) ? roleMenu[role][key] : true; a.style.display = show ? 'flex' : 'none';
       });
-
-      // Kas management group
-      const showKasMgmt = !!m.kas_management;
+      // KasMgmt group
+      const showKasMgmt = !!(roleMenu && roleMenu[role] && roleMenu[role].kas_management);
       document.getElementById('kasMgmtToggle').style.display = showKasMgmt ? 'flex' : 'none';
       document.getElementById('kasMgmtSub').style.display = showKasMgmt ? '' : 'none';
-
-      // Printer menu also depends on BT enabled (secondary rule)
-      const bt = getStored(LS.bt, DEFAULTS.bt);
-      const printerLink = document.querySelector('a[href="page-printer-struk.html"]');
-      if(printerLink){
-        printerLink.style.display = (m.printer_struk && bt.enabled) ? 'flex' : 'none';
-      }
     }
 
-    function renderMenuGrid(role, roleMenu){
-      const grid=document.getElementById('menuGrid');
-      grid.innerHTML='';
-      const current = structuredClone(roleMenu[role] || DEFAULTS.roleMenu[role] || {});
+    // Initialize form values from storage
+    const theme = getStored(LS.theme, DEFAULTS.theme);
+    const bt = getStored(LS.bt, DEFAULTS.bt);
+    const sys = getStored(LS.sys, DEFAULTS.sys);
+    const role = localStorage.getItem(LS.role) || DEFAULTS.role;
+    const roleMenu = getStored(LS.roleMenu, {});
 
-      for(const def of MENU_DEFS){
-        const chip=document.createElement('div');
-        chip.className='menuChip';
-        const name=document.createElement('span');
-        name.textContent=def.label;
-        const t=document.createElement('div');
-        t.className='toggle';
-        const on = current[def.key] ?? true;
-        setToggle(t,on);
-        t.addEventListener('click',()=>{ setToggle(t,!getToggle(t)); current[def.key]=getToggle(t); });
-        chip.appendChild(name);
-        chip.appendChild(t);
-        grid.appendChild(chip);
-      }
+    // Set UI initial states
+    function setToggle(el,on){ el.classList.toggle('on', !!on); el.dataset.on = on ? '1':'0'; }
+    function getToggle(el){ return el && el.dataset && el.dataset.on === '1'; }
 
-      // store temp state on element
-      grid._draft = current;
-    }
-
-    function syncBadges(){
-      const bt=getStored(LS.bt,DEFAULTS.bt);
-      document.getElementById('btBadge').textContent = bt.enabled ? 'Aktif' : 'Nonaktif';
-    }
-
-    // ---------- Load UI from storage ----------
-    const theme=getStored(LS.theme,DEFAULTS.theme);
-    const bt=getStored(LS.bt,DEFAULTS.bt);
-    const sys=getStored(LS.sys,DEFAULTS.sys);
-    const role=localStorage.getItem(LS.role) || DEFAULTS.role;
-    const roleMenu=getStored(LS.roleMenu,DEFAULTS.roleMenu);
-
-    applyTheme(theme);
-
-    // Theme fields
-    setToggle(document.getElementById('tDark'), theme.darkMode);
-    document.getElementById('fontScale').value = String(theme.fontScale ?? 1);
+    setToggle(tDark, theme.darkMode);
+    document.getElementById('fontScale').value = String(theme.fontScale || 1);
     document.getElementById('primary').value = theme.primary;
     document.getElementById('accent').value = theme.accent;
 
-    // BT fields
-    setToggle(document.getElementById('tBt'), bt.enabled);
+    setToggle(tBt, bt.enabled);
     document.getElementById('paperSize').value = bt.paperSize || '58';
     document.getElementById('btDeviceName').value = bt.deviceName || '';
-    document.getElementById('btAuto').value = String(!!bt.autoConnect);
-    document.getElementById('btService').value = bt.serviceUuid || '';
-    document.getElementById('btChar').value = bt.charUuid || '';
 
-    // System fields
     setToggle(document.getElementById('tLowStock'), sys.lowStockNotif);
     setToggle(document.getElementById('tSound'), sys.txSound);
     document.getElementById('timezone').value = sys.timezone || 'Asia/Jakarta';
-    document.getElementById('ppn').value = String(sys.ppnRate ?? 11);
 
-    // Role fields
     document.getElementById('roleSelect').value = role;
-    document.getElementById('rolePill').textContent = 'Role: ' + role;
+    renderMenuGrid(role, roleMenu);
+    applyTheme(theme);
+    applyRoleVisibility(role, roleMenu);
 
-    // Sidebar accordion
-    const kasMgmtToggle=document.getElementById('kasMgmtToggle');
-    const kasMgmtSub=document.getElementById('kasMgmtSub');
-    const kasMgmtChevron=document.getElementById('kasMgmtChevron');
-    function toggleKasMgmt(force){
-      const open = typeof force==='boolean' ? force : !kasMgmtSub.classList.contains('open');
-      kasMgmtSub.classList.toggle('open', open);
-      kasMgmtToggle.setAttribute('aria-expanded', open?'true':'false');
-      kasMgmtChevron.textContent = open ? '▾' : '▸';
-    }
-    kasMgmtToggle.addEventListener('click',()=>toggleKasMgmt());
-    kasMgmtToggle.addEventListener('keydown',(e)=>{ if(e.key==='Enter' || e.key===' '){ e.preventDefault(); toggleKasMgmt(); }});
-    toggleKasMgmt(false);
+    // Interactions
+    document.getElementById('tDark').addEventListener('click', ()=>{ const now = !getToggle(tDark); setToggle(tDark, now); applyTheme({ darkMode: now, primary:document.getElementById('primary').value, accent:document.getElementById('accent').value, fontScale:Number(document.getElementById('fontScale').value) }); });
+    document.getElementById('primary').addEventListener('input', ()=> applyTheme({ darkMode:getToggle(tDark), primary:document.getElementById('primary').value, accent:document.getElementById('accent').value, fontScale:Number(document.getElementById('fontScale').value) }));
+    document.getElementById('accent').addEventListener('input', ()=> applyTheme({ darkMode:getToggle(tDark), primary:document.getElementById('primary').value, accent:document.getElementById('accent').value, fontScale:Number(document.getElementById('fontScale').value) }));
+    document.getElementById('fontScale').addEventListener('change', ()=> applyTheme({ darkMode:getToggle(tDark), primary:document.getElementById('primary').value, accent:document.getElementById('accent').value, fontScale:Number(document.getElementById('fontScale').value) }));
 
-    // Live preview on changes (theme)
-    document.getElementById('tDark').addEventListener('click',()=>{
-      setToggle(tDark,!getToggle(tDark));
-      applyTheme({
-        darkMode:getToggle(tDark),
-        primary:document.getElementById('primary').value,
-        accent:document.getElementById('accent').value,
-        fontScale:Number(document.getElementById('fontScale').value)
-      });
-    });
-    document.getElementById('primary').addEventListener('input',()=>applyTheme({darkMode:getToggle(tDark),primary:primary.value,accent:accent.value,fontScale:Number(fontScale.value)}));
-    document.getElementById('accent').addEventListener('input',()=>applyTheme({darkMode:getToggle(tDark),primary:primary.value,accent:accent.value,fontScale:Number(fontScale.value)}));
-    document.getElementById('fontScale').addEventListener('change',()=>applyTheme({darkMode:getToggle(tDark),primary:primary.value,accent:accent.value,fontScale:Number(fontScale.value)}));
+    document.getElementById('roleSelect').addEventListener('change', ()=>{ renderMenuGrid(document.getElementById('roleSelect').value, roleMenu); applyRoleVisibility(document.getElementById('roleSelect').value, roleMenu); });
 
-    // BT toggle affects badge + printer menu visibility
-    const tBt=document.getElementById('tBt');
-    tBt.addEventListener('click',()=>{ setToggle(tBt,!getToggle(tBt)); syncBadges(); applyRoleVisibility(roleSelect.value, roleMenu); });
-    syncBadges();
-
-    // Role preview updates
-    const roleSelect=document.getElementById('roleSelect');
-    roleSelect.addEventListener('change',()=>{
-      renderMenuGrid(roleSelect.value, roleMenu);
-      applyRoleVisibility(roleSelect.value, roleMenu);
-    });
-
-    renderMenuGrid(roleSelect.value, roleMenu);
-    applyRoleVisibility(roleSelect.value, roleMenu);
-
-    // Save button
-    document.getElementById('btnSave').addEventListener('click',()=>{
-      const themeNew={
-        darkMode:getToggle(document.getElementById('tDark')),
-        primary:document.getElementById('primary').value,
-        accent:document.getElementById('accent').value,
-        fontScale:Number(document.getElementById('fontScale').value)
-      };
-      const btNew={
-        enabled:getToggle(document.getElementById('tBt')),
-        paperSize:document.getElementById('paperSize').value,
-        deviceName:document.getElementById('btDeviceName').value.trim(),
-        autoConnect:document.getElementById('btAuto').value==='true',
-        serviceUuid:document.getElementById('btService').value.trim(),
-        charUuid:document.getElementById('btChar').value.trim()
-      };
-      const sysNew={
-        lowStockNotif:getToggle(document.getElementById('tLowStock')),
-        txSound:getToggle(document.getElementById('tSound')),
-        timezone:document.getElementById('timezone').value,
-        ppnRate:Number(document.getElementById('ppn').value)
-      };
-
-      // Save role + role menu mapping
-      const roleNow=roleSelect.value;
+    // Save action
+    document.getElementById('btnSave').addEventListener('click', ()=>{
+      const themeNew = { darkMode:getToggle(tDark), primary:document.getElementById('primary').value, accent:document.getElementById('accent').value, fontScale:Number(document.getElementById('fontScale').value) };
+      const btNew = { enabled:getToggle(tBt), deviceName:document.getElementById('btDeviceName').value.trim(), paperSize:document.getElementById('paperSize').value };
+      const sysNew = { lowStockNotif:getToggle(document.getElementById('tLowStock')), txSound:getToggle(document.getElementById('tSound')), timezone:document.getElementById('timezone').value };
+      const roleNow = document.getElementById('roleSelect').value;
       roleMenu[roleNow] = structuredClone(document.getElementById('menuGrid')._draft || roleMenu[roleNow]);
-
       setStored(LS.theme, themeNew);
       setStored(LS.bt, btNew);
       setStored(LS.sys, sysNew);
       localStorage.setItem(LS.role, roleNow);
       setStored(LS.roleMenu, roleMenu);
-
-      document.getElementById('themeBadge').textContent='Tersimpan';
-      syncBadges();
-      applyRoleVisibility(roleNow, roleMenu);
-      toast('Tersimpan','Pengaturan tersimpan dan siap dipakai semua halaman.');
+      alert('Pengaturan tersimpan. Tema akan berlaku setelah refresh pada beberapa halaman.');
     });
 
-    // Reset local
-    document.getElementById('btnResetLocal').addEventListener('click',()=>{
-      localStorage.removeItem(LS.theme);
-      localStorage.removeItem(LS.bt);
-      localStorage.removeItem(LS.sys);
-      localStorage.removeItem(LS.role);
-      localStorage.removeItem(LS.roleMenu);
-      toast('Reset','Silakan refresh halaman untuk kembali ke default.');
+    document.getElementById('btnResetLocal').addEventListener('click', ()=>{
+      if(confirm('Hapus semua pengaturan lokal?')){ localStorage.removeItem(LS.theme); localStorage.removeItem(LS.bt); localStorage.removeItem(LS.sys); localStorage.removeItem(LS.role); localStorage.removeItem(LS.roleMenu); location.reload(); }
     });
 
-    // Demo buttons
-    document.getElementById('btnDanger').addEventListener('click',()=>toast('Demo','Reset Data dilakukan di halaman Reset Data (V3).'));
-    document.getElementById('btnExport').addEventListener('click',()=>toast('Demo','Export backup dilakukan di halaman Backup & Sync (V3).'));
+    // Kas management accordion
+    const kToggle = document.getElementById('kasMgmtToggle'); const kSub = document.getElementById('kasMgmtSub'); const kChevron = document.getElementById('kasMgmtChevron');
+    function toggleKas(force){ const open = typeof force==='boolean' ? force : !kSub.classList.contains('open'); kSub.classList.toggle('open', open); kChevron.textContent = open ? '▾' : '▸'; }
+    kToggle.addEventListener('click', ()=> toggleKas()); toggleKas(false);
+
+    // Bluetooth scanning (Web Bluetooth demo)
+    async function scanBluetooth(){
+      deviceList.innerHTML = '';
+      if(!navigator.bluetooth){ deviceList.innerHTML = '<div class="mini">Browser Anda tidak mendukung Web Bluetooth API.</div>'; return; }
+      try{
+        // Request device with acceptAllDevices to show all nearby; ask for optionalServices if provided.
+        const options = { acceptAllDevices:true }; // for specific printers you can add filters
+        const device = await navigator.bluetooth.requestDevice(options);
+        // Show chosen device
+        const id = device.id || device.name || 'unknown';
+        const name = device.name || 'Unknown device';
+        const item = document.createElement('div'); item.className='deviceItem'; item.innerHTML = `<div><strong>${name}</strong><div class="mini">id: ${id}</div></div><div><button class=\'btn\' data-id=\'${id}\'>Pilih & Simpan</button></div>`;
+        deviceList.appendChild(item);
+        item.querySelector('button').addEventListener('click', ()=>{
+          document.getElementById('btDeviceName').value = name;
+          alert('Perangkat tersimpan (nama). Untuk koneksi penuh, implementasikan connect pada halaman Printer & Struk.');
+          // Save to localStorage as convenience (not connecting here)
+          const s = getStored(LS.bt, DEFAULTS.bt); s.deviceName = name; s.enabled = true; setStored(LS.bt, s); setToggle(tBt, true);
+        });
+      }catch(err){ console.warn('bt error', err); deviceList.innerHTML = '<div class="mini">Pencarian dibatalkan atau gagal: '+(err.message||err)+'</div>'; }
+    }
+
+    document.getElementById('btnScan').addEventListener('click', ()=>{ scanBluetooth(); });
+    document.getElementById('btnClearDevices').addEventListener('click', ()=>{ deviceList.innerHTML=''; });
+
+    document.getElementById('btnClearDevices').addEventListener('click', ()=>{ localStorage.removeItem(LS.bt); alert('Daftar device lokal dihapus.'); });
+
+    document.getElementById('btnDanger').addEventListener('click', ()=>{ if(confirm('Reset data demo? (Hanya demo UI)')) alert('Reset data dijalankan di menu Reset Data (real implementation di V3).'); });
+    document.getElementById('btnExport').addEventListener('click', ()=>{ alert('Export akan dijalankan melalui menu Backup & Sync.'); });
+
+    // Sidebar nav click (navigate)
+    document.querySelectorAll('.navItem').forEach(n=> n.addEventListener('click', ()=>{ const href = n.dataset.href; if(href) location.href = href; }));
+
   </script>
 </body>
 </html>

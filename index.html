@@ -1,0 +1,266 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>WebPOS V3 — Dashboard</title>
+  <style>
+    :root{ --navW:292px; --primary:#6d5efc; --accent:#22c55e; --bg:#0b1220; --text:rgba(255,255,255,.92); --muted:rgba(255,255,255,.65); --panel:rgba(255,255,255,.06); --border:rgba(255,255,255,.12); --radius:14px; --fontScale:1; }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{margin:0;font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial; font-size:calc(14px * var(--fontScale)); color:var(--text); background:linear-gradient(180deg,#070b14 0%,#0b1220 100%);}
+    a{color:inherit;text-decoration:none}
+    .app{display:grid;grid-template-columns:var(--navW) 1fr;min-height:100vh}
+    .sidebar{position:sticky;top:0;height:100vh;padding:18px 14px;border-right:1px solid var(--border);background:rgba(10,16,28,.55);backdrop-filter:blur(12px)}
+    .brand{display:flex;align-items:center;gap:10px;padding:10px 10px 14px;margin-bottom:10px}
+    .logo{width:38px;height:38px;border-radius:12px;background:linear-gradient(135deg,var(--primary),var(--accent));display:grid;place-items:center}
+    .brand h1{font-size:14px;margin:0}
+    .brand p{margin:2px 0 0;font-size:12px;color:var(--muted)}
+    .rolePill{margin-left:auto;font-size:12px;padding:6px 10px;border-radius:999px;border:1px solid var(--border);background:rgba(255,255,255,.04)}
+    .secTitle{font-size:11px;color:var(--muted);padding:14px 10px 8px;text-transform:uppercase}
+    .navItem{display:flex;align-items:center;gap:10px;padding:10px;border-radius:12px;border:1px solid transparent;transition:.12s}
+    .navItem:hover{background:rgba(255,255,255,.03)}
+    .navItem.active{background:linear-gradient(90deg, rgba(109,94,252,.14), rgba(34,197,94,.06));border-color:rgba(109,94,252,.16)}
+    .navSub{margin:6px 0 0 34px;padding-left:10px;border-left:1px dashed rgba(255,255,255,.06);display:none}
+    .navSub.open{display:block}
+
+    .main{padding:22px}
+    .topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+    .title h2{margin:0;font-size:20px}
+    .title p{margin:6px 0 0;color:var(--muted)}
+    .actions{display:flex;gap:10px}
+    .btn{border:1px solid var(--border);background:rgba(255,255,255,.04);color:var(--text);padding:10px 12px;border-radius:12px;cursor:pointer}
+    .btn.primary{background:linear-gradient(90deg,var(--primary),var(--accent));border:none;color:#06121a}
+
+    .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:12px}
+    .card{background:var(--panel);border:1px solid var(--border);padding:14px;border-radius:12px}
+    .card h3{margin:0;font-size:13px}
+    .card p{margin:8px 0 0;font-size:20px}
+
+    .section{margin-top:18px}
+    .quick{display:flex;gap:10px;flex-wrap:wrap}
+    .quick .action{padding:12px 14px;border-radius:12px;background:rgba(255,255,255,.03);border:1px solid var(--border);cursor:pointer}
+
+    .chartPlaceholder{height:220px;border-radius:12px;background:linear-gradient(90deg,rgba(255,255,255,.02),rgba(255,255,255,.01));display:grid;place-items:center;color:var(--muted)}
+
+    @media (max-width:1000px){.grid{grid-template-columns:repeat(2,1fr)}.app{grid-template-columns:1fr}.logo{display:none}}
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="logo" aria-hidden="true">WP</div>
+        <div>
+          <h1>WebPOS</h1>
+          <p>Dashboard</p>
+        </div>
+        <div class="rolePill" id="rolePill">Role: -</div>
+      </div>
+
+      <div class="secTitle">Utama</div>
+      <a class="navItem active" href="index.html">🏠 <div>Dashboard</div></a>
+      <a class="navItem" href="page-kasir.html">🛒 <div>Kasir</div></a>
+      <a class="navItem" href="page-produk.html">📦 <div>Produk</div></a>
+
+      <div class="secTitle">Transaksi</div>
+      <a class="navItem" href="page-riwayat-transaksi.html">🧾 <div>Riwayat Transaksi</div></a>
+      <div class="navItem" id="kasMgmtToggle">💰 <div>Kas Management</div><div style="margin-left:auto" id="kasMgmtChevron">▸</div></div>
+      <div class="navSub" id="kasMgmtSub">
+        <a href="page-ringkasan-kas.html">Ringkasan Kas</a>
+        <a href="page-modal-harian.html">Modal Harian</a>
+        <a href="page-kas-masuk.html">Kas Masuk</a>
+        <a href="page-kas-keluar.html">Kas Keluar</a>
+        <a href="page-kas-shift.html">Kas & Shift</a>
+        <a href="page-closing-shift.html">Closing Shift</a>
+        <a href="page-top-up.html">Top Up</a>
+        <a href="page-tarik-tunai.html">Tarik Tunai</a>
+      </div>
+
+      <a class="navItem" href="page-pembelian-restock.html">🧺 <div>Pembelian / Restock</div></a>
+      <a class="navItem" href="page-hutang-piutang.html">📒 <div>Hutang & Piutang</div></a>
+
+      <div class="secTitle">Laporan</div>
+      <a class="navItem" href="page-laporan-penjualan.html">📈 <div>Laporan Penjualan</div></a>
+      <a class="navItem" href="page-laporan-stok.html">📊 <div>Laporan Stok</div></a>
+      <a class="navItem" href="page-barang-terlaris.html">🔥 <div>Barang Terlaris</div></a>
+
+      <div class="secTitle">Integrasi</div>
+      <a class="navItem" href="page-saldo-telegram.html">✈️ <div>Saldo Telegram</div></a>
+      <a class="navItem" href="page-data-pelanggan.html">👥 <div>Data Pelanggan</div></a>
+
+      <div class="secTitle">Sistem</div>
+      <a class="navItem" href="page-pengguna.html">👤 <div>Pengguna</div></a>
+      <a class="navItem" href="page-setting.html">⚙️ <div>Pengaturan</div></a>
+      <a class="navItem" href="page-backup-sync.html">🔄 <div>Backup & Sync</div></a>
+      <a class="navItem" href="page-log-aktivitas.html">🗂️ <div>Log Aktivitas</div></a>
+      <a class="navItem" href="page-printer-struk.html">🖨️ <div>Printer & Struk</div></a>
+      <a class="navItem" href="page-reset-data.html">🗑️ <div>Reset Data</div></a>
+
+    </aside>
+
+    <main class="main">
+      <div class="topbar">
+        <div class="title">
+          <h2>Dashboard</h2>
+          <p>Ringkasan kas, penjualan, dan aksi cepat.</p>
+        </div>
+        <div class="actions">
+          <button class="btn" id="btnRefresh">Refresh</button>
+          <button class="btn primary" id="btnOpenKasir">Buka Kasir</button>
+        </div>
+      </div>
+
+      <div class="grid" id="statsGrid">
+        <div class="card">
+          <h3>Kas di Tangan</h3>
+          <p id="kasDiTangan">Rp 0</p>
+        </div>
+        <div class="card">
+          <h3>Total Penjualan (Hari ini)</h3>
+          <p id="totalPenjualan">Rp 0</p>
+        </div>
+        <div class="card">
+          <h3>Total Transaksi</h3>
+          <p id="totalTransaksi">0</p>
+        </div>
+        <div class="card">
+          <h3>Total Laba</h3>
+          <p id="totalLaba">Rp 0</p>
+        </div>
+      </div>
+
+      <div class="section">
+        <h3>Quick Actions</h3>
+        <div class="quick">
+          <div class="action" id="actOpenKasir">Buka Kasir</div>
+          <div class="action" id="actTambahProduk">Tambah Produk</div>
+          <div class="action" id="actSetModal">Set Modal</div>
+          <div class="action" id="actKasMasuk">Kas Masuk</div>
+          <div class="action" id="actKasKeluar">Kas Keluar</div>
+          <div class="action" id="actClosingShift">Closing Shift</div>
+        </div>
+      </div>
+
+      <div class="section">
+        <h3>Grafik & Laporan Singkat</h3>
+        <div class="chartPlaceholder">(Grafik mini - bisa diganti dengan Chart.js di V3)</div>
+      </div>
+
+      <div class="section">
+        <h3>Aktivitas Terakhir</h3>
+        <div class="card" style="margin-top:10px">
+          <div id="activityList" style="font-size:13px;color:var(--muted)">Belum ada aktivitas. Tekan Refresh untuk demo.</div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <script>
+    // Dashboard V3 (index.html)
+    // This page reads settings from localStorage keys set by page-setting.html
+    const LS = { theme: 'webpos_theme', bt: 'webpos_bt', sys: 'webpos_sys', role: 'webpos_role', roleMenu: 'webpos_role_menu' };
+
+    function safeParse(s, fallback){ try{ return JSON.parse(s); } catch { return fallback; } }
+    function getStored(k, fallback){ const raw = localStorage.getItem(k); if(!raw) return structuredClone(fallback); const p = safeParse(raw, null); return p ?? structuredClone(fallback); }
+
+    // Default (in case user hasn't saved settings yet)
+    const DEFAULTS = {
+      theme: { darkMode:true, primary:'#6d5efc', accent:'#22c55e', fontScale:1 },
+      role: 'kasir',
+      roleMenu: {},
+    };
+
+    function applyTheme(theme){
+      const r = document.documentElement;
+      r.style.setProperty('--primary', theme.primary);
+      r.style.setProperty('--accent', theme.accent);
+      r.style.setProperty('--fontScale', String(theme.fontScale || 1));
+      if(theme.darkMode){ document.body.style.background = 'linear-gradient(180deg,#070b14 0%,#0b1220 100%)'; }
+      else { document.body.style.background = 'linear-gradient(180deg,#f6f7fb 0%,#eef2ff 100%)'; }
+    }
+
+    function applyRoleVisibility(role, roleMenu){
+      document.getElementById('rolePill').textContent = 'Role: ' + role;
+      const map = {
+        'index.html':'dashboard','page-kasir.html':'kasir','page-produk.html':'produk','page-riwayat-transaksi.html':'riwayat_transaksi','page-pembelian-restock.html':'pembelian_restock','page-hutang-piutang.html':'hutang_piutang','page-laporan-penjualan.html':'laporan_penjualan','page-laporan-stok.html':'laporan_stok','page-barang-terlaris.html':'barang_terlaris','page-saldo-telegram.html':'saldo_telegram','page-data-pelanggan.html':'data_pelanggan','page-pengguna.html':'pengguna','page-setting.html':'pengaturan','page-backup-sync.html':'backup_sync','page-log-aktivitas.html':'log_aktivitas','page-printer-struk.html':'printer_struk','page-reset-data.html':'reset_data'
+      };
+      document.querySelectorAll('.sidebar a.navItem').forEach(a=>{
+        const href=(a.getAttribute('href')||'').trim(); const key=map[href];
+        if(!key) return; const show = (roleMenu && roleMenu[key] !== undefined) ? roleMenu[key] : true;
+        a.style.display = show ? 'flex' : 'none';
+      });
+      const showKas = !!(roleMenu && roleMenu.kas_management);
+      document.getElementById('kasMgmtToggle').style.display = showKas ? 'flex' : 'none';
+      document.getElementById('kasMgmtSub').style.display = showKas ? '' : 'none';
+    }
+
+    // Load and apply saved theme & role
+    const theme = getStored(LS.theme, DEFAULTS.theme);
+    const bt = getStored(LS.bt, { enabled:false });
+    const role = localStorage.getItem(LS.role) || DEFAULTS.role;
+    const roleMenu = getStored(LS.roleMenu, DEFAULTS.roleMenu || {});
+    applyTheme(theme);
+    applyRoleVisibility(role, roleMenu);
+
+    // Demo: populate stats from localStorage demo dataset or zeros
+    function formatRp(n){ if(isNaN(n)) return 'Rp 0'; return 'Rp ' + n.toLocaleString('id-ID'); }
+
+    function loadDemoStats(){
+      // If you connect Firebase later, replace this with real fetches
+      const demo = JSON.parse(localStorage.getItem('webpos_demo_stats') || '{}');
+      const kas = demo.kasDiTangan || 1250000;
+      const pen = demo.totalPenjualan || 4250000;
+      const trx = demo.totalTransaksi || 42;
+      const laba = demo.totalLaba || 1250000;
+      document.getElementById('kasDiTangan').textContent = formatRp(kas);
+      document.getElementById('totalPenjualan').textContent = formatRp(pen);
+      document.getElementById('totalTransaksi').textContent = trx;
+      document.getElementById('totalLaba').textContent = formatRp(laba);
+      const act = demo.activity || [
+        '09:02 — Penjualan #TRX0001 oleh Kasir A',
+        '08:47 — Top Up saldo Rp 50.000',
+        '08:15 — Produk "Minyak Goreng" restock 20 pcs'
+      ];
+      document.getElementById('activityList').innerHTML = act.map(x=>'<div style="padding:8px 0;border-bottom:1px dashed rgba(255,255,255,.04)">'+x+'</div>').join('');
+    }
+
+    loadDemoStats();
+
+    // Quick actions (navigate to pages)
+    document.getElementById('actOpenKasir').addEventListener('click',()=>{ location.href='page-kasir.html'; });
+    document.getElementById('actTambahProduk').addEventListener('click',()=>{ location.href='page-produk.html'; });
+    document.getElementById('actSetModal').addEventListener('click',()=>{ alert('Buka modal set modal (implementasi di page-keuangan).'); });
+    document.getElementById('actKasMasuk').addEventListener('click',()=>{ location.href='page-kas-masuk.html'; });
+    document.getElementById('actKasKeluar').addEventListener('click',()=>{ location.href='page-kas-keluar.html'; });
+    document.getElementById('actClosingShift').addEventListener('click',()=>{ location.href='page-closing-shift.html'; });
+    document.getElementById('btnOpenKasir').addEventListener('click',()=>{ location.href='page-kasir.html'; });
+    document.getElementById('btnRefresh').addEventListener('click',()=>{ loadDemoStats(); alert('Data diperbarui (demo). Jika terhubung Firebase, akan fetch realtime).'); });
+
+    // Sidebar accordion
+    const kToggle = document.getElementById('kasMgmtToggle'); const kSub = document.getElementById('kasMgmtSub'); const kChevron = document.getElementById('kasMgmtChevron');
+    function toggleKas(force){ const open = typeof force==='boolean' ? force : !kSub.classList.contains('open'); kSub.classList.toggle('open', open); kChevron.textContent = open ? '▾' : '▸'; }
+    kToggle.addEventListener('click',()=>toggleKas()); toggleKas(false);
+
+    // PLACEHOLDER: Firebase init
+    /*
+      Untuk koneksi Firebase:
+      1. Tambahkan file firebase-config.js yang meng-export objek konfigurasi atau tambahkan script CDN
+      2. Inisialisasi Firebase di sini, contoh:
+         import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.20.0/firebase-app.js';
+         import { getDatabase, ref, get } from 'https://www.gstatic.com/firebasejs/9.20.0/firebase-database.js';
+         const app = initializeApp(firebaseConfig);
+         const db = getDatabase(app);
+      3. Ganti loadDemoStats() dengan query ke path yang sudah kita rancang: /stores/{storeId}/transactions, /cash_flows, /shifts
+    */
+
+    // PLACEHOLDER: Bluetooth/Printer
+    /*
+      Untuk cetak struk: baca konfigurasi dari localStorage.webpos_bt (diset di page-setting.html).
+      Implementasi contoh (Web Bluetooth) harus disesuaikan dengan protocol printer Anda.
+    */
+
+  </script>
+</body>
+</html>

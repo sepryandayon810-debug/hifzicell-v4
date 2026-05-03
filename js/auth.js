@@ -137,12 +137,30 @@ const Auth = {
       const formatted = Utils.formatUsername(username);
       if (!formatted || formatted.length < 3) { Utils.hideLoading(); Utils.showToast('Username min 3 karakter', 'error'); return { success: false }; }
 
-      const check = await database.ref('users').orderByChild('username').equalTo(formatted).once('value');
-      if (check.val()) { Utils.hideLoading(); Utils.showToast('Username sudah digunakan', 'error'); return { success: false }; }
-
+            // ⭐ 1. Bikin akun Firebase Auth DULU (sekarang user sudah terautentikasi)
       const userEmail = email || `${formatted}@webpos.local`;
-      const res = await auth.createUserWithEmailAndPassword(userEmail, password);
+      let res;
+      try {
+        res = await auth.createUserWithEmailAndPassword(userEmail, password);
+      } catch (e) {
+        Utils.hideLoading();
+        if (e.code === 'auth/email-already-in-use') Utils.showToast('Email sudah terdaftar', 'error');
+        else if (e.code === 'auth/weak-password') Utils.showToast('Password terlalu lemah', 'error');
+        else Utils.showToast('Gagal membuat akun: ' + e.message, 'error');
+        return { success: false };
+      }
       const uid = res.user.uid;
+
+      // ⭐ 2. Sekarang sudah auth, baru cek username + write data
+      const check = await database.ref('users').orderByChild('username').equalTo(formatted).once('value');
+      if (check.val()) {
+        // Username sudah ada → hapus akun Firebase yang baru dibuat
+        await auth.currentUser.delete();
+        await auth.signOut();
+        Utils.hideLoading();
+        Utils.showToast('Username sudah digunakan', 'error');
+        return { success: false };
+      }
 
       // Developer & Owner langsung aktif. Admin & Kasir pending.
       const autoActive = (role === 'developer' || role === 'owner');

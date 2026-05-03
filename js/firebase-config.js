@@ -20,6 +20,5 @@ firebase.initializeApp(firebaseConfig);
 // Export references (global)
 const auth = firebase.auth();
 const database = firebase.database();
-const storage = firebase.storage();
 
 console.log('✅ Firebase initialized (compat v9)');

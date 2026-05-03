@@ -168,9 +168,13 @@ const Auth = {
       return { success: true, uid };
     } catch (e) {
       Utils.hideLoading();
+      console.error('REGISTER EXACT ERROR:', e.code, e.message, e);
       let msg = 'Pendaftaran gagal';
       if (e.code === 'auth/email-already-in-use') msg = 'Email sudah terdaftar';
       else if (e.code === 'auth/weak-password') msg = 'Password terlalu lemah (min 6)';
+      else if (e.code === 'auth/invalid-email') msg = 'Email tidak valid';
+      else if (e.code === 'auth/operation-not-allowed') msg = 'Email/Password belum aktif di Firebase Console';
+      else msg = e.message || 'Pendaftaran gagal';
       Utils.showToast(msg, 'error');
       return { success: false, message: msg };
     }

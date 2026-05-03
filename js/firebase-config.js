@@ -4,13 +4,14 @@
  */
 
 const firebaseConfig = {
-  apiKey: "AIzaSyD9XyvgofyFyX5aUMARcA_GO-N2Tcw725Q",
-  authDomain: "goodhifzicell.firebaseapp.com",
-  databaseURL: "https://goodhifzicell-default-rtdb.asia-southeast1.firebasedatabase.app",
-  projectId: "goodhifzicell",
-  storageBucket: "goodhifzicell.firebasestorage.app",
-  messagingSenderId: "306835710868",
-  appId: "1:306835710868:web:817551e6c8c19c8eca6581"
+  apiKey: "AIzaSyCSC05MTnaiiSftj1TA-LVCH4ymHBAbkoU",
+  authDomain: "hifzicell-v2.firebaseapp.com",
+  databaseURL: "https://hifzicell-v2-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "hifzicell-v2",
+  storageBucket: "hifzicell-v2.firebasestorage.app",
+  messagingSenderId: "766095621773",
+  appId: "1:766095621773:web:da40a79eab0f573683acc4",
+  measurementId: "G-N9B9PKFCHT"
 };
 
 // Initialize Firebase
